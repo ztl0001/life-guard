@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>夜间应用锁 v1.1</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; padding: 24px; background: #0f1115; color: #e8eaf0; line-height: 1.7; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .sub { color: #9aa0b0; font-size: 14px; margin-bottom: 22px; }
+  a.dl { display: block; text-align: center; background: #ffc66d; color: #14161c; text-decoration: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 700; margin: 18px 0 8px; }
+  .size { text-align: center; color: #9aa0b0; font-size: 13px; }
+  h2 { font-size: 16px; margin: 26px 0 8px; }
+  ol { padding-left: 20px; margin: 0; }
+  li { margin-bottom: 8px; font-size: 15px; }
+  code { background: #1c1f27; padding: 2px 6px; border-radius: 5px; font-size: 13px; }
+  .tag { display: inline-block; background: #2a2d38; color: #ffc66d; border-radius: 6px; padding: 1px 7px; font-size: 12px; margin-left: 6px; vertical-align: middle; }
+  .tip { background: #1a1d24; border-left: 3px solid #ffc66d; padding: 12px 14px; border-radius: 6px; font-size: 14px; color: #c3c8d4; margin-top: 18px; }
+</style>
+</head>
+<body>
+  <h1>夜间应用锁<span class="tag">v1.1</span></h1>
+  <div class="sub">01:30 – 06:00 期间，除短信 / 时钟 / 电话外，其他应用一律打不开。</div>
+
+  <a class="dl" href="../NightAppLock.apk">下载并安装（29 KB）</a>
+  <div class="size">Android 5.0 及以上；首次安装若提示「禁止安装未知应用」，点设置 → 允许来自此来源</div>
+
+  <h2>这一版去掉了三个「后门」</h2>
+  <ol>
+    <li>「启用夜间锁」开关 —— 已删除，锁无法在 App 里被关掉</li>
+    <li>「设置锁定时段」—— 已删除，01:30 – 06:00 写死在应用内部</li>
+    <li>「编辑白名单」—— 已删除，放行名单只由系统自动识别，无法人工增删</li>
+  </ol>
+
+  <h2>解锁 3 分钟</h2>
+  <ol>
+    <li>锁定时段内可点「解锁 3 分钟」，立刻临时放行所有应用</li>
+    <li>每个自然日最多 3 次，用完后按钮变灰并显示「次数已用完」</li>
+    <li>触发入口有两个：App 主界面，以及被拦截时弹出的锁定提示浮层</li>
+  </ol>
+
+  <h2>安装后确认</h2>
+  <ol>
+    <li>打开 App，确认「无障碍服务」和「悬浮窗权限」显示已开启（锁完全依赖无障碍服务）</li>
+    <li>华为 / 小米等 ROM 记得在「应用启动管理」里关掉自动管理，允许自启动与后台活动，否则夜里可能被系统清掉</li>
+  </ol>
+
+  <div class="tip">
+    验证：点「立即测试：锁定 2 分钟」→ 打开微信应被弹回桌面并出现提示浮层 → 在浮层上点「解锁 3 分钟」→ 提示变为已解锁，此时可以正常打开任何应用；回到 App 会看到剩余次数减 1。
+  </div>
+</body>
+</html>

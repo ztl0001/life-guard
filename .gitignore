@@ -1,0 +1,30 @@
+# ---- study-guard：运行期数据（每个人自己的，不进仓库）----
+study-guard/state.json
+study-guard/state.json.*
+study-guard/state.backup-*.json
+study-guard/backups/
+study-guard/*.log
+study-guard/*.pid
+study-guard/*.lock
+study-guard/pet_pos.json
+study-guard/running.json
+study-guard/诊断报告.txt
+
+# ---- study-guard：桌宠动画素材，用 tools/make_pet_anim.py 自行生成 ----
+study-guard/pet_anim/*.png
+
+# ---- night-app-lock：本地工具链与构建产物 ----
+night-app-lock/tools/
+night-app-lock/build/
+night-app-lock/out/
+night-app-lock/keystore/
+
+# ---- 通用 ----
+__pycache__/
+*.pyc
+*.pyo
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

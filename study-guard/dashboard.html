@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>学习积分管家</title>
+<style>
+  :root{
+    --bg:#0e1216; --card:#171d24; --card2:#1d252e; --line:#2a3440;
+    --txt:#e8eef5; --dim:#a3b4c6; --green:#3ddc97; --amber:#f5a524;
+    --red:#e5484d; --blue:#4c9aff; --purple:#a476ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--txt); font-size:15px;
+    font-family:"Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+    padding:18px 16px 60px; line-height:1.55;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px}
+  h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+  .sub{color:var(--dim);font-size:13px;margin-top:2px}
+  .badge{padding:7px 15px;border-radius:999px;font-weight:700;font-size:14px;white-space:nowrap}
+  .badge.lock{background:rgba(229,72,77,.16);color:var(--red);border:1px solid rgba(229,72,77,.45)}
+  .badge.free{background:rgba(61,220,151,.16);color:var(--green);border:1px solid rgba(61,220,151,.45)}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:820px){.g3,.g2,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.g3,.g2,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .card h2{font-size:14px;font-weight:600;color:var(--dim);letter-spacing:.6px;margin-bottom:10px}
+  .big{font-size:38px;font-weight:700;line-height:1.1}
+  .big small{font-size:15px;font-weight:500;color:var(--dim);margin-left:4px}
+  .muted{color:var(--dim);font-size:13.5px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .spread{display:flex;justify-content:space-between;align-items:baseline}
+  .bar{height:10px;border-radius:999px;background:#0b0f13;overflow:hidden;margin:8px 0 6px;border:1px solid var(--line)}
+  .bar>i{display:block;height:100%;border-radius:999px;transition:width .4s}
+  .fill-green{background:linear-gradient(90deg,#2bbd80,#3ddc97)}
+  .fill-amber{background:linear-gradient(90deg,#d98a12,#f5a524)}
+  .fill-blue{background:linear-gradient(90deg,#3d7fd6,#4c9aff)}
+  button{
+    font-family:inherit;font-size:14px;color:var(--txt);background:var(--card2);
+    border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;
+    transition:.15s;font-weight:500;
+  }
+  button:hover:not(:disabled){background:#26313d;border-color:#3a4756}
+  button:disabled{opacity:.38;cursor:not-allowed}
+  button.primary{background:linear-gradient(180deg,#2bbd80,#22a06b);border-color:#2bbd80;color:#04140d;font-weight:700}
+  button.warn{background:linear-gradient(180deg,#e5484d,#c43a3f);border-color:#e5484d;color:#fff;font-weight:700}
+  button.ghost{background:transparent}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button.chip.on{background:linear-gradient(180deg,#2bbd80,#22a06b);border-color:#2bbd80;
+    color:#04140d;font-weight:700}
+  table.log{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  table.log th{text-align:left;color:var(--dim);font-weight:600;padding:7px 10px;
+    border-bottom:1px solid var(--line);font-size:12.5px}
+  table.log td{padding:9px 10px;border-bottom:1px solid var(--line)}
+  table.log tr:last-child td{border-bottom:0}
+  table.log td.num{font-variant-numeric:tabular-nums;color:var(--dim)}
+  table.log tr.today td{background:rgba(61,220,151,.07)}
+  .timer{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--green)}
+  .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .kv:last-child{border-bottom:0}
+  .chart{display:flex;align-items:flex-end;gap:10px;height:132px;margin-top:8px}
+  .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;height:100%}
+  .col .bars{display:flex;gap:2px;align-items:flex-end;height:100%}
+  .col .bars i{flex:1;border-radius:4px 4px 0 0;min-height:2px}
+  .col b{font-size:11.5px;color:#bccbdb;font-weight:500;text-align:center;display:block}
+  .legend{display:flex;gap:16px;font-size:13px;color:var(--txt);margin-top:10px}
+  .legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px}
+  .legend .l1::before{background:var(--green)}
+  .legend .l2::before{background:var(--purple)}
+  .legend .l3::before{background:#ff7ab8}
+  .plist{max-height:260px;overflow:auto;margin-top:4px}
+  .pitem{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .pitem:last-child{border-bottom:0}
+  .pitem .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .dot.on{background:var(--red);box-shadow:0 0 8px rgba(229,72,77,.7)}
+  .dot.off{background:#3a4756}
+  .pill{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--card2);color:var(--dim);border:1px solid var(--line)}
+  .pill.g{color:var(--green);border-color:rgba(61,220,151,.4)}
+  .pill.picked{color:#0b2a1c;background:var(--green);border-color:var(--green);font-weight:600}
+  table.log tr.pickable{cursor:pointer}
+  table.log tr.pickable:hover td{background:rgba(255,255,255,.04)}
+  table.log tr.picked td{background:rgba(61,220,151,.18)}
+  .pill.r{color:var(--red);border-color:rgba(229,72,77,.4)}
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);
+    background:#202a34;border:1px solid var(--line);border-radius:12px;
+    padding:12px 20px;font-size:14px;opacity:0;pointer-events:none;
+    transition:.25s;z-index:99;max-width:88vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.bad{border-color:rgba(229,72,77,.6)}
+  .sec-title{font-size:15px;font-weight:700;margin:22px 0 12px;color:var(--txt);
+    display:flex;align-items:center;gap:8px}
+  .sec-title::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--blue)}
+  .banner{background:rgba(245,165,36,.12);border:1px solid rgba(245,165,36,.45);
+    color:#f0c274;border-radius:12px;padding:13px 17px;margin:-4px 0 18px;
+    font-size:13.5px;line-height:1.75}
+  .banner b{color:#ffd08a}
+  .pill.a{color:var(--amber);border-color:rgba(245,165,36,.45)}
+  #countdown{
+    position:fixed;top:8px;left:50%;transform:translateX(-50%);
+    z-index:99999;display:none;padding:14px 34px;border-radius:16px;
+    background:linear-gradient(180deg,#c0392b,#8e1f16);
+    border:2px solid #ffb454;color:#ffe6a7;
+    font-size:26px;font-weight:700;letter-spacing:1px;
+    box-shadow:0 8px 32px rgba(0,0,0,.6);
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  input[type=number],input[type=text]{
+    font-family:inherit;font-size:14px;background:#0b0f13;color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%;
+  }
+  input:focus{outline:none;border-color:var(--blue)}
+  select{font-family:inherit;font-size:14px;background:#0b0f13;color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+</style>
+</head>
+<body>
+<div id="countdown"></div>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>学习积分管家</h1>
+      <div class="sub" id="clock">连接中…</div>
+    </div>
+    <div class="row">
+      <span class="badge lock" id="lockbadge">读取状态…</span>
+    </div>
+  </header>
+
+  <div class="banner" id="banner" style="display:none"></div>
+
+  <div class="grid g4">
+    <div class="card">
+      <h2>可用行动点</h2>
+      <div class="big" id="ap">–<small>AP</small></div>
+      <div class="muted" id="apnote">今日已获得 <b id="aptoday">0</b></div>
+    </div>
+    <div class="card">
+      <h2>今日乘数</h2>
+      <div class="big" id="mult">–</div>
+      <div class="muted" id="multdetail">—</div>
+      <div class="muted" id="wakeline">—</div>
+    </div>
+    <div class="card">
+      <h2>连续锚点</h2>
+      <div class="big" id="streak">0<small>天</small></div>
+      <div class="muted">护身符 <b id="talisman">0</b> 张</div>
+    </div>
+    <div class="card">
+      <h2>今日娱乐额度（游戏 / B 站分开算）</h2>
+      <div class="muted"><b>游戏</b> 还剩</div>
+      <div class="big" id="gameleft">–</div>
+      <div class="muted">已用 <b id="gametoday">0</b> / <b id="gamecap">120</b> 分钟</div>
+      <div class="muted" style="margin-top:10px"><b>B 站</b> 还剩</div>
+      <div class="big" id="bilileft">–</div>
+      <div class="muted">已用 <b id="bilitoday">0</b> / <b id="bilicap">120</b> 分钟</div>
+      <div class="row" style="margin-top:12px">
+        <input type="number" id="unplanned" placeholder="计划外游戏分钟数" min="1" max="1440" style="max-width:180px">
+        <button id="btn-unplanned">记录计划外游戏</button>
+        <span class="muted" id="unplannedcost">—</span>
+      </div>
+      <div class="muted" style="margin-top:6px" id="unplannedtotal">今天还没有计划外记录。</div>
+    </div>
+  </div>
+
+  <div class="sec-title">当前封锁状态</div>
+  <div class="grid g2">
+    <div class="card">
+      <h2>游戏目录</h2>
+      <div class="big" id="locktext">–</div>
+      <div class="muted" id="locksub">—</div>
+      <div class="btns">
+        <button class="warn" id="btn-lock">立即重新封锁</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>B 站网页</h2>
+      <div class="big" id="biblock">–</div>
+      <div class="muted" id="bisub">—</div>
+      <div class="btns">
+        <button class="warn" id="btn-bililock">提前封锁 B 站</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">今天要做的</div>
+  <div class="grid g2">
+    <div class="card">
+      <h2>打卡</h2>
+      <div class="kv"><span>工作打卡（起床）</span><span id="k-wake">未打卡</span></div>
+      <div class="kv"><span>系统检测到首次使用电脑</span><span id="k-det">—</span></div>
+      <div class="kv"><span>午睡</span><span id="k-nap">未记录</span></div>
+      <div class="kv"><span>洗澡</span><span id="k-shower">未打卡</span></div>
+      <div class="kv"><span>洗衣服</span><span id="k-laundry">未打卡</span></div>
+      <div class="kv"><span>户外 / 运动</span><span id="k-out">未打卡</span></div>
+      <div class="kv"><span>按时关屏</span><span id="k-off">未打卡</span></div>
+      <div class="kv"><span>关机倒计时</span><span id="k-shutdown">—</span></div>
+      <div class="btns">
+        <button class="primary" id="btn-wake">工作打卡</button>
+        <button id="btn-out">户外 +2</button>
+        <button id="btn-shower">洗澡 +2</button>
+        <button id="btn-laundry">洗衣服 +2</button>
+        <button id="btn-off">关屏 +2（点完 3 分钟后关机）</button>
+        <button id="btn-talisman">使用护身符</button>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <input type="number" id="napmin" placeholder="午睡分钟数（30 到 40 都算达标）" min="0" max="240" style="max-width:280px">
+        <button id="btn-nap">记录午睡</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>学习计时</h2>
+      <div class="muted" style="margin-bottom:8px">先选这次要做的任务，再开始计时。</div>
+      <div class="row" id="taskpick" style="margin-bottom:12px"></div>
+      <div class="timer" id="timer">00:00</div>
+      <div class="bar"><i class="fill-green" id="timerbar" style="width:0%"></i></div>
+      <div class="muted" id="timersub">只有真正在电脑前的时间才算数，离开超过 2 分钟自动暂停。</div>
+      <div class="btns">
+        <button class="primary" id="btn-study">开始一个学习块</button>
+        <button id="btn-pause">暂停</button>
+        <button id="btn-cancel">取消</button>
+      </div>
+      <div class="kv" style="margin-top:12px"><span>今日学习</span><span><b id="studytoday">0</b> 分钟 / <b id="studyblocks">0</b> 个学习块</span></div>
+    </div>
+  </div>
+
+  <div class="sec-title">每天的学习</div>
+  <div class="card">
+    <div class="row" id="studySummary" style="margin-bottom:6px"></div>
+    <table class="log">
+      <thead>
+        <tr>
+          <th style="width:20%">日期</th>
+          <th style="width:16%">学习时长</th>
+          <th style="width:14%">学习块</th>
+          <th style="width:50%">任务分布</th>
+        </tr>
+      </thead>
+      <tbody id="studyDaysBody"></tbody>
+    </table>
+    <div class="muted" style="margin-top:10px">每天的学习记录都会存进 state.json，保留最近 400 天。<b>点某一行</b>就能只看那天完成的学习块，再点一下取消。</div>
+  </div>
+
+  <div class="sec-title">学习记录</div>
+  <div class="card">
+    <div class="row" id="studyByTask" style="margin-bottom:6px"></div>
+    <div class="row" id="studyLogFilter" style="margin-bottom:6px"></div>
+    <table class="log">
+      <thead>
+        <tr>
+          <th style="width:24%">完成时间</th>
+          <th style="width:36%">任务</th>
+          <th style="width:20%">时长</th>
+          <th style="width:20%">行动点</th>
+        </tr>
+      </thead>
+      <tbody id="studyLogBody"></tbody>
+    </table>
+    <div class="muted" style="margin-top:10px">每完成一个学习块，这里就多一行。绿色底是今天的。</div>
+  </div>
+
+  <div class="sec-title">兑换</div>
+  <div class="grid g2">
+    <div class="card">
+      <h2>游戏时间</h2>
+      <div class="muted" id="rate">每 60 分钟 6 AP，到点自动重新上锁</div>
+      <div class="btns" id="redeem"></div>
+      <div class="muted" style="margin-top:10px">买多少扣多少；没用完的部分会退回行动点。游戏额度每天清零，不累积。</div>
+    </div>
+    <div class="card">
+      <h2>B 站</h2>
+      <div class="muted" id="birate">每 60 分钟 6 AP，到点自动重新封锁</div>
+      <div class="btns" id="biredeem"></div>
+      <div class="muted" style="margin-top:10px">B 站平时是封住的，只有兑换之后才会临时打开，到点强制重新封锁。额度和游戏<b>分开</b>，各自独立计算。</div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h2>奖励商店</h2>
+      <div class="btns" id="shop"></div>
+      <div class="muted" style="margin-top:10px">这里的东西比游戏便宜得多，是给你换换心情用的。</div>
+    </div>
+    <div class="card">
+      <h2>倒计时</h2>
+      <div class="muted">娱乐时间结束前 <b id="warnsec">180</b> 秒，屏幕上方居中会出现倒计时浮层，就算游戏全屏也压在最上层。页面顶部同时会显示一条。</div>
+      <div class="muted" style="margin-top:6px"><b>关屏也是同一条浮层</b>：点「关屏」后 3 分钟关机；到 <b id="offline">01:00</b> 还没点，同样 3 分钟后关机（那种情况不加分）。点掉浮层只是关提示，<b>不会取消关机</b>——真要取消得在命令行跑 <code>shutdown /a</code>。</div>
+      <div class="btns">
+        <button id="btn-closeoverlay">关掉倒计时浮层</button>
+      </div>
+      <div class="muted" style="margin-top:10px">浮层本身点一下也能关掉；娱乐时间结束时它会自动消失。</div>
+    </div>
+  </div>
+
+  <div class="sec-title">桌面宠物</div>
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="muted" id="petstate">—</div>
+      <div class="btns" style="margin-top:0">
+        <button id="btn-pet-hide">收起</button>
+        <button id="btn-pet-show">重新显示</button>
+      </div>
+    </div>
+    <div class="muted" style="margin-top:10px">
+       桌面上那条蓝鱼可以拖动，位置会记住。鼠标移上去会显示行动点、正在进行的任务与已累计时间、当前乘数、游戏和 B 站各自用了多少额度，以及 deepseek / GLM 余额。右键点它可以收起。
+    </div>
+  </div>
+
+  <div class="sec-title">近七天</div>
+  <div class="card">
+    <div class="chart" id="chart"></div>
+    <div class="legend"><span class="l1">学习分钟</span><span class="l2">游戏分钟</span><span class="l3">B 站分钟</span></div>
+  </div>
+
+  <div class="sec-title">受保护目录</div>
+  <div class="card">
+    <div class="row">
+      <input type="text" id="newpath" placeholder="粘贴一个要封锁的目录，例如 D:\SomeGame">
+      <button id="btn-add">加入</button>
+      <button id="btn-scan">自动扫描新增</button>
+    </div>
+    <div class="plist" id="paths"></div>
+  <div class="muted" style="margin-top:8px"><b>封锁范围只增不减</b>：勾上就把这个目录加进封锁，加进去之后面板上<b>不能取消</b>（已封锁的框是灰的，点不动）。这是有意堵掉"想玩的时候顺手点一下放出来"这条路；确实要移除，只能手工编辑 <code>config.json</code>。</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+let S = null;
+let studyDayFilter = null;   // date string, or null for "most recent blocks"
+function hhmmss(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60;
+  return (h? String(h).padStart(2,'0')+':' : '') + String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function toast(msg, bad){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (bad ? ' bad' : '');
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>{ t.className='toast'; }, 2600);
+}
+async function act(action, extra){
+  try{
+    const r = await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(Object.assign({action}, extra||{}))});
+    const j = await r.json();
+    toast(j.message || (j.ok ? '完成' : '失败'), !j.ok);
+    if(j.state){ S = j.state; render(); }
+  }catch(e){ toast('请求失败：'+e.message, true); }
+}
+function render(){
+  if(!S) return;
+  document.getElementById('clock').textContent = S.now + '　|　' + S.today;
+  const apx = document.getElementById('ap');
+  const apn = document.getElementById('apnote');
+  if (S.ap < 0) {
+    // 负数时整块标红：数字、负号、单位、以及下面那行欠账说明
+    apx.innerHTML = S.ap + '<small style="color:inherit">AP</small>';
+    apx.style.color = '#ff5a4d';
+    apn.innerHTML = '欠账 <b>' + Math.abs(S.ap) + '</b> AP　今日已获得 <b id="aptoday">'
+      + S.ap_today + '</b>　还清前买不了娱乐时间';
+    apn.style.color = '#ff5a4d';
+  } else {
+    apx.innerHTML = S.ap + '<small>AP</small>';
+    apx.style.color = '';
+    apn.innerHTML = '今日已获得 <b id="aptoday">' + S.ap_today + '</b>';
+    apn.style.color = '';
+  }
+  document.getElementById('mult').textContent = S.multiplier.toFixed(2);
+  const det = S.wake_detected ? ('，系统检测 ' + S.wake_detected) : '';
+  document.getElementById('wakeline').textContent =
+    '工作打卡目标 ' + S.wake_target + '（达标线 ' + S.wake_window_end + '）' +
+    (S.wake_time ? '，已打卡 ' + S.wake_time : '，未打卡') + det;
+  // 现在只有"学习块"算进乘数成长：洗澡/洗衣服/户外/关屏照旧给 AP，但不推乘数
+  const ev = S.study_blocks || 0;
+  document.getElementById('multdetail').textContent =
+    '基础 ' + S.rhythm_base.toFixed(2) + ' ＋ 完成 ' + ev + ' 个学习块 × ' + S.event_bonus +
+    ' ＝ ' + S.multiplier.toFixed(2) +
+    (S.multiplier >= S.multiplier_cap ? '（已到上限）' : '');
+  document.getElementById('streak').innerHTML = S.streak + '<small>天</small>';
+  document.getElementById('talisman').textContent = S.talismans;
+
+  document.getElementById('gameleft').innerHTML = Math.max(0, S.game_cap - S.game_minutes) + '<small>分钟</small>';
+  document.getElementById('gametoday').textContent = S.game_minutes;
+  document.getElementById('gamecap').textContent = S.game_cap;
+  document.getElementById('bilileft').innerHTML = Math.max(0, S.bili_cap - S.bili_minutes) + '<small>分钟</small>';
+  document.getElementById('bilitoday').textContent = S.bili_minutes;
+  document.getElementById('bilicap').textContent = S.bili_cap;
+
+  // 计划外游戏时间：记录系统没管到的游戏时间（比如 Steam、手机游戏）
+  const upBox = document.getElementById('unplanned');
+  const upRate = (S.cost.per_hour || 6) * (S.unplanned_multiplier || 1.5);
+  upBox.oninput = function(){
+    const m = parseInt(upBox.value, 10);
+    document.getElementById('unplannedcost').textContent =
+      (m > 0) ? ('= 扣 ' + Math.max(1, Math.round(m / 60 * upRate)) +
+                 ' AP（' + upRate.toFixed(1) + ' AP/小时）') : '—';
+  };
+  document.getElementById('unplannedtotal').textContent = S.unplanned_minutes
+    ? ('今天已记录计划外游戏 ' + S.unplanned_minutes + ' 分钟。')
+    : '今天还没有计划外记录。';
+
+  const badge = document.getElementById('lockbadge');
+  if(S.locked){ badge.className='badge lock'; badge.textContent='封锁中'; }
+  else { badge.className='badge free'; badge.textContent='解锁中 '+hhmmss(S.unlock_remaining); }
+
+  document.getElementById('locktext').textContent = S.locked ? '已封锁' : '解锁中';
+  if (S.locked) {
+    const n = S.paths.filter(p=>p.enabled).length;
+    const w = (S.acl_failed||[]).length;
+    let sub = '受保护目录 ' + n + ' 个';
+    if (w) sub += '，其中 ' + (n-w) + ' 个已用权限锁死，' + w + ' 个靠进程拦截';
+    else sub += '，全部用权限锁死，里面的程序无法启动';
+    if (S.blocked_attempts) sub += '　已拦截 ' + S.blocked_attempts + ' 次';
+    document.getElementById('locksub').textContent = sub;
+  } else {
+    document.getElementById('locktext').textContent = '游戏解锁中';
+    document.getElementById('locksub').textContent =
+      '剩余 ' + hhmmss(S.unlock_remaining) + '，结束后自动重新上锁';
+  }
+  document.getElementById('btn-lock').disabled = S.locked;
+
+  // "blocked" is the intent, "hosts_blocked" is what the hosts file really says.
+  // When they disagree the unlock silently failed, so say so instead of lying.
+  const bi = S.bilibili || {};
+  let biBig, biSub;
+  if (!bi.enabled) {
+    biBig = '已关闭'; biSub = '封锁总开关已关闭';
+  } else if (!bi.blocked && bi.hosts_blocked) {
+    biBig = '解锁失败';
+    biSub = bi.can_write_hosts
+      ? ('hosts 没能解除：' + (bi.note || '未知原因'))
+      : '修改 hosts 需要管理员权限，B 站现在还是打不开。请右键「安装.cmd」选「以管理员身份运行」。';
+  } else if (bi.blocked) {
+    biBig = '封锁中';
+    biSub = bi.hosts_blocked ? 'hosts 已生效，网页打不开'
+      : ('未生效：' + (bi.note || '需要管理员权限运行安装脚本'));
+  } else {
+    biBig = '已临时打开';
+    biSub = '兑换中，剩余 ' + hhmmss(S.unlock_remaining) + '，到点自动重新封锁';
+  }
+  document.getElementById('biblock').textContent = biBig;
+  document.getElementById('bisub').textContent = biSub;
+  document.getElementById('btn-bililock').disabled = !bi.enabled;
+
+  const bn = document.getElementById('banner');
+  const issues = [];
+  if ((S.acl_failed||[]).length) {
+    const names = S.acl_failed.map(function(p){ return p.split('\\').pop(); }).join('、');
+    issues.push('<b>' + S.acl_failed.length + ' 个目录没能用权限锁死</b>：这些目录只给了 '
+      + 'Administrators 组完全控制权，标准权限改不动它们的权限。程序已经自动改用进程拦截兜底——'
+      + '游戏仍能启动，但会在一两秒内被强制结束。名单：' + names
+      + '。要彻底锁死，请右键 <b>安装.cmd</b> 选「以管理员身份运行」。');
+  }
+  if (bi.enabled && bi.blocked && !bi.hosts_blocked) {
+    // 该封却没封上
+    issues.push('<b>B 站封锁还没生效</b>：写入 hosts 需要管理员权限。同样右键 <b>安装.cmd</b> 选「以管理员身份运行」。');
+  } else if (bi.enabled && !bi.blocked && bi.hosts_blocked) {
+    // 兑换了却没解开：钱花了，网页还是打不开
+    issues.push('<b>兑换了但 B 站还是打不开</b>：解除 hosts 封锁失败。'
+      + (bi.can_write_hosts ? ('原因：' + (bi.note || '未知'))
+                            : '守护进程现在不是以管理员身份运行的。')
+      + '请右键 <b>安装.cmd</b> 选「以管理员身份运行」。');
+  } else if (bi.enabled && !bi.can_write_hosts) {
+    issues.push('<b>兑换 B 站会失败</b>：解除 hosts 封锁同样需要管理员权限，而守护进程现在不是以管理员身份'
+      + '运行的，所以 B 站打不开。现在点兑换不会扣行动点。请右键 <b>安装.cmd</b> 选「以管理员身份运行」，'
+      + '重启之后兑换才会真正解锁 B 站。');
+  }
+  if (issues.length) {
+    bn.style.display = '';
+    bn.innerHTML = issues.join('<br><br>') +
+      '<div class="btns"><button class="primary" id="btn-elevate">以管理员权限重启（点一次「是」）</button></div>';
+    document.getElementById('btn-elevate').onclick = function(){ act('elevate'); };
+  } else {
+    bn.style.display = 'none';
+  }
+
+  document.getElementById('k-wake').textContent = S.wake_time
+    ? (S.wake_time + '（达标线 ' + S.wake_window_end + '）')
+    : ('未打卡，达标线 ' + S.wake_window_end);
+  if (S.wake_penalty_done) {
+    const kw = document.getElementById('k-wake');
+    kw.textContent += '　·  超标，行动点已减半';
+    kw.style.color = '#ff8a5a';
+  }
+  document.getElementById('k-det').textContent = S.wake_detected || '—';
+  document.getElementById('k-nap').textContent = S.nap_minutes===null
+    ? ('未记录，上限 ' + S.nap_limit + ' 分钟')
+    : (S.nap_minutes + ' 分钟 / 上限 ' + S.nap_limit);
+  if (S.nap_penalty_done) {
+    const kn = document.getElementById('k-nap');
+    kn.textContent += '　·  超时已扣分';
+    kn.style.color = '#ff8a5a';
+  }
+  document.getElementById('k-shower').textContent = S.shower_done ? '已完成' : '未打卡';
+  document.getElementById('k-laundry').textContent = S.laundry_done ? '已完成' : '未打卡';
+  document.getElementById('k-out').textContent = S.outdoor_done ? '已完成' : '未打卡';
+  document.getElementById('k-off').textContent = S.screen_off_done
+    ? '已完成' : ('未打卡（' + S.screen_off_window_end + ' 前算，到点也自动关机）');
+  const ksd = document.getElementById('k-shutdown');
+  if (S.shutdown_in > 0) {
+    ksd.textContent = hhmmss(S.shutdown_in) + '（' +
+      (S.shutdown_reason === 'click' ? '已打卡' : '超时未打卡，不加分') + '）';
+    ksd.style.color = S.shutdown_reason === 'click' ? 'var(--green)' : '#ff8a5a';
+  } else {
+    ksd.textContent = S.shutdown_enabled === false ? '已关闭' : '—';
+    ksd.style.color = '';
+  }
+  document.getElementById('btn-wake').disabled = !!S.wake_time;
+  document.getElementById('btn-out').disabled = S.outdoor_done;
+  document.getElementById('btn-shower').disabled = S.shower_done;
+  document.getElementById('btn-laundry').disabled = S.laundry_done;
+  document.getElementById('btn-off').disabled = S.screen_off_done;
+  document.getElementById('btn-talisman').disabled = S.talismans<=0 || S.talisman_used;
+  document.getElementById('warnsec').textContent = S.warning_seconds;
+  document.getElementById('offline').textContent = S.screen_off_before || '01:00';
+
+  const sa = S.study_active;
+  const tp = document.getElementById('taskpick');
+  tp.innerHTML = '';
+  const running = !!sa;
+  (S.study_tasks || []).forEach(function(t){
+    const b = document.createElement('button');
+    b.className = 'chip' + ((S.study_task === t.id) ? ' on' : '');
+    b.textContent = t.name;
+    b.disabled = running;
+    b.title = running ? '计时中，结束或取消后才能切换' : '选择这个任务';
+    b.onclick = function(){ act('set_task', {task: t.id}); };
+    tp.appendChild(b);
+  });
+  const curName = ((S.study_tasks || []).filter(function(t){ return t.id === S.study_task; })[0] || {}).name || '';
+
+  if(sa){
+    const paused = !!sa.paused;
+    const pct = Math.min(100, sa.active_seconds / sa.target_seconds * 100);
+    const tl = document.getElementById('timer');
+    tl.textContent = paused ? '已暂停' : hhmmss(sa.remaining);
+    tl.style.color = paused ? '#ff8a5a' : '';
+    document.getElementById('timerbar').style.width = pct + '%';
+    document.getElementById('timerbar').style.background =
+      paused ? 'linear-gradient(90deg,#f5a524,#e07b1a)' : '';
+    document.getElementById('timersub').textContent =
+      (paused ? ('已暂停 ' + hhmmss(sa.paused_for || 0) + '，这段时间不算：')
+              : '进行中：')
+      + (sa.name || curName) + '　有效时间 ' + hhmmss(sa.active_seconds) +
+      ' / ' + hhmmss(sa.target_seconds)
+      + (sa.paused_total ? ('　累计暂停 ' + hhmmss(sa.paused_total)) : '');
+    // 学习块不能手动提前结束：让这个按钮在计时期间失去作用，只能等它到点
+    document.getElementById('btn-study').textContent = '计时中 · 到点自动完成';
+    document.getElementById('btn-study').disabled = true;
+    document.getElementById('btn-pause').disabled = false;
+    document.getElementById('btn-pause').textContent = paused ? '继续计时' : '暂停';
+  } else {
+    document.getElementById('timer').textContent = '00:00';
+    document.getElementById('timer').style.color = '';
+    document.getElementById('timerbar').style.width = '0%';
+    document.getElementById('timerbar').style.background = '';
+    document.getElementById('timersub').textContent =
+      '只有真正在电脑前的时间才算数，离开超过 2 分钟自动暂停。';
+    document.getElementById('btn-study').textContent =
+      curName ? ('开始一个学习块 · ' + curName) : '开始一个学习块';
+    document.getElementById('btn-study').disabled = false;
+    document.getElementById('btn-pause').disabled = true;
+    document.getElementById('btn-pause').textContent = '暂停';
+  }
+  document.getElementById('studytoday').textContent = S.study_minutes;
+  document.getElementById('studyblocks').textContent = S.study_blocks;
+
+  const bt = document.getElementById('studyByTask');
+  bt.innerHTML = '';
+  (S.study_tasks || []).forEach(function(t){
+    const mins = (S.study_by_task || {})[t.id] || 0;
+    const s = document.createElement('span');
+    s.className = 'pill' + (mins ? ' g' : '');
+    s.textContent = t.name + '　' + mins + ' 分钟';
+    bt.appendChild(s);
+  });
+
+  renderStudyDays();
+  refreshStudyLog();
+
+  const pet = S.pet || {};
+  let ptxt;
+  if (!pet.enabled) ptxt = '已关闭（config.json 里的 pet.enabled）';
+  else if (pet.hidden_for > 0) ptxt = '已收起，约 ' + Math.ceil(pet.hidden_for / 60) + ' 分钟后自动回来';
+  else if (!pet.image_exists) ptxt = '找不到 fish.png，请把图片放回程序文件夹';
+  else ptxt = pet.running ? '正在桌面上' : '正在启动…';
+  document.getElementById('petstate').textContent =
+    '状态：' + ptxt + '　角色高 ' + (pet.character_height || 227) + ' 像素　亮度 ' +
+    (pet.brightness || 1).toFixed(2) + '　动画 ' +
+    (pet.anim_exists === false ? '素材缺失' : '正常');
+
+  const rate = document.getElementById('rate');
+  rate.textContent = '每 60 分钟 ' + S.cost.per_hour + ' AP，每天上限 ' + S.game_cap + ' 分钟';
+  document.getElementById('birate').textContent =
+    '每 60 分钟 ' + S.cost.per_hour + ' AP，每天上限 ' + S.bili_cap + ' 分钟，到点自动重新封锁';
+  const rb = document.getElementById('redeem');
+  const bb = document.getElementById('biredeem');
+  rb.innerHTML = ''; bb.innerHTML = '';
+  const busy = !!S.active_kind;
+  S.cost.steps.forEach(function(m){
+    const cost = Math.max(1, Math.round(m/60*S.cost.per_hour));
+    const short = busy || S.ap < cost;
+    const overG = (S.game_minutes + m) > S.game_cap;
+    const overB = (S.bili_minutes + m) > S.bili_cap;
+    const b = document.createElement('button');
+    b.textContent = m + ' 分钟 · ' + cost + ' AP';
+    b.disabled = short || overG;
+    b.onclick = function(){ act('redeem', {minutes:m, kind:'game'}); };
+    rb.appendChild(b);
+    const b2 = document.createElement('button');
+    b2.textContent = m + ' 分钟 · ' + cost + ' AP';
+    b2.disabled = short || overB;
+    b2.onclick = function(){ act('redeem', {minutes:m, kind:'bilibili'}); };
+    bb.appendChild(b2);
+  });
+
+  const sh = document.getElementById('shop');
+  sh.innerHTML = '';
+  (S.rewards||[]).forEach(function(r){
+    const done = (S.bought||[]).indexOf(r.id) >= 0;
+    const b = document.createElement('button');
+    b.textContent = r.name + ' · ' + r.cost + ' AP' + (done ? ' ✓' : '');
+    b.disabled = done || S.ap < r.cost;
+    b.onclick = function(){ act('buy_reward', {id:r.id}); };
+    sh.appendChild(b);
+  });
+
+  const maxv = Math.max(60, Math.max.apply(null, S.history.map(function(d){
+    return Math.max(d.study, d.game, d.bili || 0);
+  })));
+  const ch = document.getElementById('chart');
+  ch.innerHTML = '';
+  S.history.forEach(function(d){
+    const c = document.createElement('div'); c.className = 'col';
+    const bars = document.createElement('div'); bars.className = 'bars';
+    const i1 = document.createElement('i');
+    i1.style.height = (d.study/maxv*100) + '%';
+    i1.style.background = 'linear-gradient(180deg,#3ddc97,#2bbd80)';
+    const i2 = document.createElement('i');
+    i2.style.height = (d.game/maxv*100) + '%';
+    i2.style.background = 'linear-gradient(180deg,#a476ff,#7d55cc)';
+    const i3 = document.createElement('i');
+    i3.style.height = ((d.bili || 0)/maxv*100) + '%';
+    i3.style.background = 'linear-gradient(180deg,#ff9ecb,#e0639f)';
+    bars.appendChild(i1); bars.appendChild(i2); bars.appendChild(i3);
+    const lab = document.createElement('b');
+    lab.textContent = d.date.slice(5) + '　' + d.study + '/' + d.game + '/' + (d.bili || 0);
+    lab.style.fontSize = '10.5px';
+    c.appendChild(bars); c.appendChild(lab);
+    ch.appendChild(c);
+  });
+
+  const pl = document.getElementById('paths');
+  pl.innerHTML = '';
+  S.paths.forEach(function(p){
+    const div = document.createElement('div'); div.className='pitem';
+    const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=p.enabled;
+    cb.style.width='16px'; cb.style.height='16px'; cb.style.flex='0 0 auto';
+    if (p.enabled) {
+      // 只增不减：锁上的目录在面板上取消不了，所以这个框直接不给点
+      cb.disabled = true;
+      cb.title = '已封锁。封锁范围只增不减，面板上不能取消（要移除得手改 config.json）';
+    } else {
+      cb.onchange = function(){ act('toggle_path', {path:p.path}); };
+      cb.title = '勾上就把它加进封锁范围；加进去之后面板上就不能取消了';
+    }
+    const dot = document.createElement('span');
+    dot.className = 'dot ' + (p.locked ? 'on' : 'off');
+    const nm = document.createElement('span'); nm.className='nm';
+    nm.textContent = p.path; nm.title = p.path;
+    const pill = document.createElement('span');
+    pill.className = 'pill ' + (p.locked ? 'r' : (p.watch_guarded ? 'a' : ''));
+    pill.textContent = !p.exists ? '不存在'
+      : (p.locked ? '权限锁死' : (p.watch_guarded ? '进程拦截' : '可访问'));
+    div.appendChild(cb); div.appendChild(dot); div.appendChild(nm); div.appendChild(pill);
+    pl.appendChild(div);
+  });
+}
+document.getElementById('btn-wake').onclick = ()=>act('wake');
+document.getElementById('btn-out').onclick = ()=>act('outdoor');
+document.getElementById('btn-shower').onclick = ()=>act('shower');
+document.getElementById('btn-laundry').onclick = ()=>act('laundry');
+document.getElementById('btn-off').onclick = ()=>act('screen_off');
+document.getElementById('btn-talisman').onclick = ()=>act('use_talisman');
+document.getElementById('btn-nap').onclick = ()=>{
+  const v = document.getElementById('napmin').value;
+  if(v===''){ toast('先填午睡分钟数', true); return; }
+  act('nap', {minutes: parseInt(v,10)});
+};
+document.getElementById('btn-unplanned').onclick = ()=>{
+  const v = document.getElementById('unplanned').value;
+  if(v===''){ toast('先填计划外游戏的分钟数', true); return; }
+  act('log_unplanned', {minutes: parseInt(v,10)});
+};
+// 只负责开始；到点由守护进程自动结算（手动"完成"这条路已删除）
+document.getElementById('btn-study').onclick = ()=>act('study_start');
+document.getElementById('btn-cancel').onclick = ()=>act('study_cancel');
+document.getElementById('btn-pause').onclick = ()=>{
+  const pa = S && S.study_active;
+  act(pa && pa.paused ? 'study_resume' : 'study_pause');
+};
+  document.getElementById('btn-lock').onclick = ()=>act('lock_now');
+  document.getElementById('btn-bililock').onclick = ()=>act('lock_bili');
+document.getElementById('btn-closeoverlay').onclick = ()=>act('close_overlay');
+document.getElementById('btn-pet-hide').onclick = ()=>act('hide_pet');
+document.getElementById('btn-pet-show').onclick = ()=>act('show_pet');
+document.getElementById('btn-add').onclick = ()=>{
+  const v = document.getElementById('newpath').value.trim();
+  if(!v){ toast('先填路径', true); return; }
+  act('add_path', {path:v});
+};
+document.getElementById('btn-scan').onclick = ()=>act('rescan');
+
+let failCount = 0;
+let lastSync = 0;
+function tickCountdown(){
+  const cd = document.getElementById('countdown');
+  if (!S || !S.active_kind || !S.unlock_remaining) { cd.style.display = 'none'; return; }
+  const left = Math.max(0, S.unlock_remaining - (Date.now() - lastSync) / 1000);
+  if (left > 0 && left <= S.warning_seconds) {
+    cd.style.display = '';
+    cd.textContent = (S.active_kind === 'game' ? '游戏' : 'B 站') +
+      '时间还剩 ' + hhmmss(Math.ceil(left));
+  } else {
+    cd.style.display = 'none';
+  }
+}
+setInterval(tickCountdown, 250);
+function showConnError(err){
+  const bn = document.getElementById('banner');
+  const why = (err && err.name === 'AbortError')
+    ? '请求超过 6 秒没有响应'
+    : ((err && err.message) ? err.message : '未知错误');
+  bn.style.display = '';
+  bn.innerHTML = '<b>连不上守护进程</b>（已失败 ' + failCount + ' 次）：' + why +
+    '<br><br>守护进程可能已经退出。双击「积分管家」文件夹里的 <b>打开面板.cmd</b>，' +
+    '它会重新启动守护进程再打开这个页面。如果还是不行，双击 <b>诊断.cmd</b>，' +
+    '把生成的 诊断报告.txt 发给我。' +
+    '<div class="btns"><button class="primary" id="btn-retry">重试</button></div>';
+  const b = document.getElementById('btn-retry');
+  if (b) b.onclick = function(){ failCount = 0; pull(); };
+}
+function renderStudyLog(rows){
+  const body = document.getElementById('studyLogBody');
+  body.innerHTML = '';
+  rows = rows || [];
+  if (!rows.length){
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 4; td.style.color = 'var(--dim)';
+    td.textContent = studyDayFilter
+      ? (studyDayFilter + ' 没有完成的学习块。')
+      : '还没有完成的学习块。完成第一个之后这里会出现记录。';
+    tr.appendChild(td); body.appendChild(tr);
+    return;
+  }
+  rows.forEach(function(r){
+    const tr = document.createElement('tr');
+    if (r.date === S.today) tr.className = 'today';
+    const cells = [r.date.slice(5) + ' ' + (r.at || ''), r.name || r.task,
+                   r.minutes + ' 分钟', '+' + r.ap + ' AP'];
+    cells.forEach(function(v, i){
+      const td = document.createElement('td');
+      if (i === 0 || i >= 2) td.className = 'num';
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+function refreshStudyLog(){
+  const bar = document.getElementById('studyLogFilter');
+  bar.innerHTML = '';
+  const s = document.createElement('span');
+  s.className = 'pill' + (studyDayFilter ? ' picked' : '');
+  s.textContent = studyDayFilter ? ('只看 ' + studyDayFilter) : '显示最近 60 个学习块';
+  bar.appendChild(s);
+  if (studyDayFilter){
+    const b = document.createElement('button');
+    b.textContent = '显示全部';
+    b.onclick = function(){ studyDayFilter = null; renderStudyDays(); refreshStudyLog(); };
+    bar.appendChild(b);
+  }
+  if (!studyDayFilter){ renderStudyLog(S.study_log || []); return; }
+  fetch('/api/study_log?day=' + encodeURIComponent(studyDayFilter), {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ renderStudyLog(j.entries || []); })
+    .catch(function(e){ toast('读取当天记录失败：' + e.message, true); });
+}
+
+function renderStudyDays(){
+  if (!S) return;
+  const days = S.study_days || [];
+  const sm = document.getElementById('studySummary');
+  sm.innerHTML = '';
+  let totMin = 0, totBlocks = 0;
+  days.forEach(function(d){ totMin += (d.minutes || 0); totBlocks += (d.blocks || 0); });
+  [['累计学习', totMin + ' 分钟'], ['累计学习块', totBlocks + ' 个'],
+   ['有记录', days.length + ' 天']].forEach(function(p){
+    const s = document.createElement('span');
+    s.className = 'pill' + (totMin ? ' g' : '');
+    s.textContent = p[0] + '　' + p[1];
+    sm.appendChild(s);
+  });
+  const body = document.getElementById('studyDaysBody');
+  body.innerHTML = '';
+  if (!days.length){
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 4; td.style.color = 'var(--dim)';
+    td.textContent = '还没有学习记录。完成第一个学习块之后，这里会出现每天的小结。';
+    tr.appendChild(td); body.appendChild(tr);
+    return;
+  }
+  days.forEach(function(d){
+    const tr = document.createElement('tr');
+    tr.className = 'pickable';
+    if (d.date === S.today) tr.className += ' today';
+    if (d.date === studyDayFilter) tr.className += ' picked';
+    const dist = (d.tasks || []).map(function(t){
+      return (t.name || t.id) + ' ' + t.minutes + ' 分钟';
+    }).join('、') || '—';
+    [d.date, d.minutes + ' 分钟', d.blocks + ' 个', dist].forEach(function(v, i){
+      const td = document.createElement('td');
+      if (i === 1 || i === 2) td.className = 'num';
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    tr.onclick = function(){
+      studyDayFilter = (studyDayFilter === d.date) ? null : d.date;
+      renderStudyDays();
+      refreshStudyLog();
+    };
+    body.appendChild(tr);
+  });
+}
+
+async function pull(){
+  if (document.hidden) return;
+  const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 6000) : null;
+  try{
+    const r = await fetch('/api/state', ctrl ? { signal: ctrl.signal, cache: 'no-store' }
+                                            : { cache: 'no-store' });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    S = await r.json();
+    lastSync = Date.now();
+    failCount = 0;
+    render();
+  }catch(e){
+    failCount++;
+    if (failCount >= 2) showConnError(e);
+  }finally{
+    if (timer) clearTimeout(timer);
+  }
+}
+pull();
+setInterval(pull, 5000);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden) pull(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+{
+  "celebrate": {
+    "source": "工作状态-雀跃庆祝",
+    "file": "celebrate.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_angry": {
+    "source": "点击回应-傲娇生气",
+    "file": "click_angry.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_caught": {
+    "source": "偷吃零食被抓住",
+    "file": "click_caught.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_curtsy": {
+    "source": "女仆屈膝礼仪",
+    "file": "click_curtsy.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_dance": {
+    "source": "可爱宅舞",
+    "file": "click_dance.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_flower": {
+    "source": "凭空生花",
+    "file": "click_flower.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_happy": {
+    "source": "点击回应-开心跃动",
+    "file": "click_happy.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_juggle": {
+    "source": "三球抛接",
+    "file": "click_juggle.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_rage": {
+    "source": "玩游戏气急败坏",
+    "file": "click_rage.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_shy": {
+    "source": "点击回应-害羞惊讶",
+    "file": "click_shy.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_startled": {
+    "source": "被吓一跳",
+    "file": "click_startled.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_tailslap": {
+    "source": "用鲸鱼尾巴拍打地面",
+    "file": "click_tailslap.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_tap": {
+    "source": "原地敲击桌面互动",
+    "file": "click_tap.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_tickle": {
+    "source": "点击回应-挠痒咯咯笑",
+    "file": "click_tickle.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_wakeup": {
+    "source": "打瞌睡被惊醒",
+    "file": "click_wakeup.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "click_wave": {
+    "source": "点击回应-元气挥手",
+    "file": "click_wave.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "drag": {
+    "source": "被鼠标拖拽悬空反馈",
+    "file": "drag.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "eat_rice": {
+    "source": "吃白饭",
+    "file": "eat_rice.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "idle": {
+    "source": "待机呼吸休闲",
+    "file": "idle.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "jump": {
+    "source": "原地跳跃抓碎头顶物品",
+    "file": "jump.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "rest": {
+    "source": "原地小憩沉眠",
+    "file": "rest.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "special_dove": {
+    "source": "变鸽子",
+    "file": "special_dove.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "special_magic": {
+    "source": "扑克魔术",
+    "file": "special_magic.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "talk": {
+    "source": "碎碎念-发呆碎碎念",
+    "file": "talk.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "walk": {
+    "source": "原地左转奔跑",
+    "file": "walk.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  },
+  "yawn": {
+    "source": "哈欠连天",
+    "file": "yawn.png",
+    "frames": 120,
+    "size": [
+      360,
+      270
+    ]
+  }
+}

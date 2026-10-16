@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">夜间应用锁</string>
+    <string name="pick_title">管理允许使用的应用</string>
+    <string name="service_desc">在设定时段内（默认 01:30-06:00）拦截白名单以外的应用，仅放行短信、时钟、电话。</string>
+</resources>

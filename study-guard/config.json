@@ -1,0 +1,177 @@
+{
+  "port": 8765,
+  "user_sid": "",
+  "schedule": {
+    "wake_target": "08:30",
+    "wake_window_end": "08:50",
+    "wake_penalty": true,
+    "wake_penalty_divisor": 2,
+    "wake_penalty_debt": 10,
+    "nap_limit_minutes": 40,
+    "nap_penalty": 5,
+    "screen_off_before": "01:00",
+    "screen_off_window_end": "01:00",
+    "shutdown_enabled": true,
+    "shutdown_after_seconds": 180,
+    "shutdown_window_end": "05:00",
+    "shutdown_force": false,
+    "streak_days": 7
+  },
+  "ap": {
+    "study_block_minutes": 40,
+    "study_reward": 4,
+    "outdoor_minutes": 20,
+    "outdoor_reward": 2,
+    "screen_off_reward": 2,
+    "shower_reward": 2,
+    "laundry_reward": 2,
+    "no_overrun_reward": 1,
+    "streak_reward": 10,
+    "event_bonus": 0.15,
+    "multiplier_cap": 1.0,
+    "screen_off_bonus": 5,
+    "screen_off_bonus_multiplier": 1.0,
+    "allow_negative": true,
+    "screen_off_bonus_blocks": 5
+  },
+  "game": {
+    "ap_per_hour": 6,
+    "blocked_processes": [
+      "steam.exe",
+      "steamwebhelper.exe",
+      "steamservice.exe",
+      "gameoverlayui.exe",
+      "steamerrorreporter.exe"
+    ],
+    "unplanned_multiplier": 1.5,
+    "steps_minutes": [
+      30,
+      60,
+      90
+    ],
+    "daily_cap_minutes": 120,
+    "refund_unused": true,
+    "warning_seconds": 180,
+    "entertainment_processes": [
+      "msedge.exe",
+      "chrome.exe",
+      "firefox.exe",
+      "quark.exe",
+      "bilibili.exe"
+    ]
+  },
+  "bilibili": {
+    "enabled": true,
+    "daily_cap_minutes": 120,
+    "reset_browser_network_on_end": true,
+    "domains": [
+      "www.bilibili.com",
+      "bilibili.com",
+      "m.bilibili.com",
+      "api.bilibili.com",
+      "live.bilibili.com",
+      "space.bilibili.com",
+      "t.bilibili.com",
+      "passport.bilibili.com",
+      "account.bilibili.com",
+      "b23.tv",
+      "www.bilibili.tv",
+      "bilibili.tv",
+      "hdslb.com",
+      "i0.hdslb.com",
+      "i1.hdslb.com",
+      "i2.hdslb.com",
+      "s1.hdslb.com",
+      "s2.hdslb.com",
+      "s3.hdslb.com",
+      "biliimg.com",
+      "bilivideo.com",
+      "upos-sz-mirrorcos.bilivideo.com",
+      "upos-sz-mirrorali.bilivideo.com",
+      "upos-sz-mirrorhw.bilivideo.com",
+      "biliapi.net",
+      "biliapi.com",
+      "acgvideo.com"
+    ],
+    "note": "默认封锁，只有兑换之后才临时打开；到点会写回 hosts 并重启浏览器的网络服务，掐断已经开着的连接（标签页不会关）"
+  },
+  "rewards": [
+    {
+      "id": "outing",
+      "name": "出门半天，市内或近郊",
+      "cost": 5
+    },
+    {
+      "id": "food",
+      "name": "奶茶或一顿好吃的",
+      "cost": 3
+    },
+    {
+      "id": "movie",
+      "name": "一场电影或一集剧",
+      "cost": 4
+    },
+    {
+      "id": "custom",
+      "name": "自定义奖励",
+      "cost": 10
+    }
+  ],
+  "study_tasks": [
+    {
+      "id": "agent",
+      "name": "Agent 开发"
+    },
+    {
+      "id": "thesis",
+      "name": "毕业论文设计"
+    },
+    {
+      "id": "other",
+      "name": "其他"
+    }
+  ],
+  "pet": {
+    "enabled": true,
+    "image": "fish.png",
+    "anim_dir": "pet_anim",
+    "character_height": 227,
+    "brightness": 1.1,
+    "fps": 12,
+    "speech": true,
+    "speech_interval": [
+      45,
+      110
+    ],
+    "roam": true,
+    "facing": "right",
+    "key_color": "#ff00ff",
+    "hide_minutes": 30,
+    "idle_action_interval": [
+      50,
+      120
+    ],
+    "daily_action_rotation": true,
+    "exclude_actions": []
+  },
+  "balance": {
+    "enabled": true,
+    "refresh_seconds": 60,
+    "key_file": "D:\\api_key.txt",
+    "deepseek": {
+      "label_prefix": "梁文",
+      "match": [
+        "deepseek"
+      ]
+    },
+    "glm": {
+      "match": [
+        "智谱GLM4.6vflash",
+        "智谱",
+        "glm"
+      ]
+    },
+    "note": "每 60 秒查一次余额；峰/谷按北京时间，工作日 9-12、14-18 为峰（显示成 梁文峰），周末和其余时间显示 梁文谷"
+  },
+  "protected": []
+}
