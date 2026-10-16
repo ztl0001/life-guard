@@ -8,6 +8,14 @@
 
 ![桌宠](docs/pet-preview.png)
 
+悬停时它弹出的状态框（行动点 / 任务 / 乘数 / 娱乐额度，最后一屏还会带 deepseek 和 GLM 的余额）：
+
+![状态框](docs/status-card-preview.png)
+
+![桌宠动作](docs/pet-actions.png)
+
+> 最后一张是桌宠 18 段动画里的 12 段（截图取自素材来源 dsh-pet 的预览帧，实际运行时按 360×270、12fps 播放）。完整清单见 `pet_anim/manifest.json`。
+
 ---
 
 ## 它到底做了什么
