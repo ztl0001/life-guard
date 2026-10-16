@@ -6,15 +6,35 @@
 
 ![面板](docs/dashboard-preview.png)
 
-![桌宠](docs/pet-preview.png)
+![桌宠](docs/pet-on-desktop.png)
 
-鼠标悬停在鱼身上会弹出状态卡片，一路显示到 deepseek 和 GLM 的余额（`梁文峰` / `梁文谷` 是按北京时间算的峰谷价，后面那个小数字是较上次查询的变化量）：
+鼠标悬停在鱼身上会弹出状态卡片，一路显示到 deepseek 和 GLM 的余额（`梁文峰` / `梁文谷` 是按北京时间算的峰谷价，后面那个小数字是较上次查询的变化量）。
 
-![桌宠悬停状态框](docs/pet-on-desktop.png)
+### 它会做的动作（共 26 段）
 
-![桌宠动作](docs/pet-actions.png)
+**待机与自主动作** —— 平时循环播放，以及每隔 50–120 秒自己做一次的小动作：
 
-> 最后一张是桌宠 18 段动画里的 12 段（截图取自素材来源 dsh-pet 的预览帧，实际运行时按 360×270、12fps 播放）。完整清单见 `pet_anim/manifest.json`。
+![待机与自主动作](docs/pet-actions-idle.png)
+
+**点击回应** —— 15 段专用动画，每天按日期随机取 7 种作为当天的回应：
+
+![点击回应](docs/pet-actions-click.png)
+
+**触发动作与彩蛋** —— 完成学习块、拖动，以及约 12% 概率自己触发的两个彩蛋：
+
+![触发动作与彩蛋](docs/pet-actions-special.png)
+
+> 上面三张都取自本机 `pet_anim/` 里的真实 APNG 素材（360×270，与运行时逐帧一致），每格是各自动作幅度最大的那一帧。完整清单见 `pet_anim/manifest.json`。
+
+**对话气泡按语气换色**，不是固定一种：
+
+| 语气 | 颜色 | 什么时候出现 |
+|---|---|---|
+| 良好 | 绿色 | 正在学习、乘数满格、今天学够了 |
+| 提醒 | 黄色 | 还没工作打卡、还没做学习块、乘数偏低 |
+| 警告 | 红色 | 娱乐时间快结束、额度用完、连点被惹毛 |
+| 信息 | 蓝色 | 游戏 / B 站剩余时间、攒够了行动点 |
+| 闲聊 | 暖黄 | 喝水、放松肩膀这类随口说的话 |
 
 ---
 
@@ -83,7 +103,7 @@ study-guard/
 
 ## 桌宠动画素材要自己生成一次
 
-仓库里**没有** `pet_anim/*.png`——18 段动画一共约 239 MB，放进 Git 仓库不划算，所以只提交了清单文件。
+仓库里**没有** `pet_anim/*.png`——26 段动画一共约 239 MB，放进 Git 仓库不划算，所以只提交了清单文件。
 
 不生成也能跑：`pet.py` 找不到动画时会用 `fish.png` 静态图兜底，功能都在，只是鱼不会动。
 
@@ -93,7 +113,7 @@ study-guard/
 # 1. 取素材（MIT 协议，见文末致谢）
 git clone https://github.com/PC2005-cloud/dsh-pet.git
 
-# 2. 按 manifest.json 把 18 段 webm 解码成 360×270 的带 alpha APNG
+# 2. 按 manifest.json 把 26 段 webm 解码成 360×270 的带 alpha APNG
 python tools/make_pet_anim.py --dsh-pet "D:\dsh-pet\dsh-pet"
 
 # 只想先试两段：
@@ -142,7 +162,7 @@ python tools/make_pet_anim.py --dsh-pet "D:\dsh-pet\dsh-pet" --only idle,click_h
 
 桌面宠物的角色形象与动画素材来自 [**PC2005-cloud/dsh-pet**](https://github.com/PC2005-cloud/dsh-pet)（MIT License, Copyright © 2026 PC2005-cloud）。
 
-本项目取用了其中 18 段动画（`assets/webm/*.webm`，VP9 + alpha），用 ffmpeg 解码为 360×270 的 APNG 后播放，并做了约 1.1 倍的提亮（`pet.brightness`，因为素材比原始立绘暗约 10%）。这属于该项目的衍生物，同样遵循 MIT 协议，版权声明见仓库根目录的 [LICENSE](../LICENSE)。
+本项目取用了其中 26 段动画（`assets/webm/*.webm`，VP9 + alpha），用 ffmpeg 解码为 360×270 的 APNG 后播放，并做了约 1.1 倍的提亮（`pet.brightness`，因为素材比原始立绘暗约 10%）。这属于该项目的衍生物，同样遵循 MIT 协议，版权声明见仓库根目录的 [LICENSE](../LICENSE)。
 
 ---
 

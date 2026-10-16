@@ -13,9 +13,9 @@
 
 ![面板](study-guard/docs/dashboard-preview.png)
 
-![桌宠](study-guard/docs/pet-preview.png)
+![桌宠](study-guard/docs/pet-on-desktop.png)
 
-蓝色的鱼负责盯着你：悬停显示行动点、当前任务、乘数、当天学习与娱乐时长。
+蓝色的鱼负责盯着你：悬停显示行动点、当前任务、乘数、当天学习与娱乐时长，以及 deepseek / GLM 余额。点一下它有 15 段回应动画轮换，闲着的时候会自己打哈欠、溜达、吃白饭——[26 段动作都在这里](study-guard/README.md#它会做的动作共-26-段)。
 
 ### 夜间应用锁
 
@@ -91,7 +91,7 @@ life-guard/
 
 ## 致谢
 
-- 桌面宠物的**设计与动画素材**借鉴自 [**PC2005-cloud/dsh-pet**](https://github.com/PC2005-cloud/dsh-pet)（MIT License，Copyright © 2026 PC2005-cloud）。那条蓝鲸鱼的角色形象、100 多段手绘风动作都来自这个项目；本仓库里的桌宠是把其中 18 段动画用 ffmpeg 解码成带透明通道的 APNG 后来播放的，属于衍生物，同样遵循 MIT 协议。
+- 桌面宠物的**设计与动画素材**借鉴自 [**PC2005-cloud/dsh-pet**](https://github.com/PC2005-cloud/dsh-pet)（MIT License，Copyright © 2026 PC2005-cloud）。那条蓝鲸鱼的角色形象、100 多段手绘风动作都来自这个项目；本仓库里的桌宠是把其中 26 段动画用 ffmpeg 解码成带透明通道的 APNG 后来播放的，属于衍生物，同样遵循 MIT 协议。
 - 特别感谢 [@PC2005-cloud](https://github.com/PC2005-cloud) 作为本仓库的协作者。
 
 ---
