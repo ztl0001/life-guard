@@ -8,9 +8,9 @@
 
 ![桌宠](docs/pet-preview.png)
 
-悬停时它弹出的状态框（行动点 / 任务 / 乘数 / 娱乐额度，最后一屏还会带 deepseek 和 GLM 的余额）：
+鼠标悬停在鱼身上会弹出状态卡片，一路显示到 deepseek 和 GLM 的余额（`梁文峰` / `梁文谷` 是按北京时间算的峰谷价，后面那个小数字是较上次查询的变化量）：
 
-![状态框](docs/status-card-preview.png)
+![桌宠悬停状态框](docs/pet-on-desktop.png)
 
 ![桌宠动作](docs/pet-actions.png)
 
