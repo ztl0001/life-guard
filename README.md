@@ -1,5 +1,10 @@
 # life-guard 🐋🔒
 
+[![Stars](https://img.shields.io/github/stars/ztl0001/life-guard?style=social)](https://github.com/ztl0001/life-guard/stargazers)
+[![License](https://img.shields.io/github/license/ztl0001/life-guard)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Android-4a5568)]()
+[![PRs Welcome](https://img.shields.io/badge/PR-welcome-brightgreen)](CONTRIBUTING.md)
+
 两个**自己给自己上的锁**。都是先有需求、后有代码——不是玩具项目，是我本人每天在用的东西。
 
 | 子项目 | 平台 | 一句话 | 代码量 |
@@ -119,6 +124,28 @@ life-guard/
 
 - 桌面宠物的**设计与动画素材**借鉴自 [**PC2005-cloud/dsh-pet**](https://github.com/PC2005-cloud/dsh-pet)（MIT License，Copyright © 2026 PC2005-cloud）。那条蓝鲸鱼的角色形象、100 多段手绘风动作都来自这个项目；本仓库里的桌宠是把其中 26 段动画用 ffmpeg 解码成带透明通道的 APNG 后来播放的，属于衍生物，同样遵循 MIT 协议。
 - 特别感谢 [@PC2005-cloud](https://github.com/PC2005-cloud) 作为本仓库的协作者。
+
+> ### 🐾 觉得这 26 段动作不够？
+>
+> 去 **[PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)** —— 那边有 **100 多段**手绘风透明动画：做饭、过节、乐器、撸猫、下五子棋、玩魔方……本仓库只取了其中 26 段。
+>
+> - **想拿来用**：用 [make_pet_anim.py](study-guard/tools/make_pet_anim.py) 一条命令就能接进来，具体见 [DIY 第 3 层](DIY.md#第-3-层换桌宠角色加动作)
+> - **想要新动作**：dsh-pet 本身就是个活跃的开源项目，出新动作、新宠物种类、新的生成管线都欢迎去那边提需求或贡献
+
+---
+
+## 如果它帮到你了
+
+这两个东西都是**先有需求、后有代码**，是我每天真在用的，不是写完就放在那里的 demo。默认值全是照我的作息定的，你八成得改一通才能用顺手。
+
+如果照着自己搭了一套，或者只是从里面抄走了某个想法（比如「罚款要能扣成负数」「已锁的目录不许在界面上解锁」）：
+
+**点个 ⭐ [Star](https://github.com/ztl0001/life-guard/stargazers) 吧。** 这是我能想到的唯一回报——它让我知道这东西不只对我一个人有用，也能让更多人看到「自律工具还能这么做」。
+
+有 bug、有想法、有改进，都欢迎：
+
+- 想改造成自己的 → [DIY.md](DIY.md)
+- 想一起改代码 → [CONTRIBUTING.md](CONTRIBUTING.md)，**PR 很欢迎**
 
 ---
 

@@ -124,6 +124,14 @@ python tools/make_pet_anim.py --dsh-pet "D:\dsh-pet\dsh-pet" --only idle,click_h
 
 生成出来的动画合计约 239 MB，常驻内存约 150–200 MB。介意的话可以只生成常用的几段——`manifest.json` 里没有的键，程序会退回到静态图或跳过该动作。
 
+### 嫌动作少？去素材源头挑
+
+本仓库只用了 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 里的 **26 段**，那边一共 **100 多段**手绘风透明动画，规格完全一致：做饭、过节、乐器、撸猫、下五子棋、玩魔方、各种整活……都在 `assets/webm/` 里。
+
+接一段新的只要三步（导出 → 在 `manifest.json` 登记 → 在 `pet.py` 的三个表里挂上），完整写法见 [DIY 第 3 层](../DIY.md#第-3-层换桌宠角色加动作)。
+
+**想要的动作那边也没有？** 直接去 [dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 提——它是这个角色和全部素材的源头，连「AI 生成动画」的提示词和管线都在那个仓库里，比在这个仓库里造轮子合适得多。
+
 ---
 
 ## 配置

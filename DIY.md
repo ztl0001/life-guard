@@ -200,6 +200,10 @@ TONE_COLOR = {
 
 **当天那批动作是预解码的**（点下去立刻有反应，不用等动画文件加载），所以一天里换的那 7 个动作启动时就定好了。想让它固定成老样子，把 `pet.daily_action_rotation` 设成 `false`。
 
+> **本仓库只用了 26 段，[dsh-pet](https://github.com/PC2005-cloud/dsh-pet) 那边一共 100 多段**，挑的时候直接看它的 [`assets/webm/`](https://github.com/PC2005-cloud/dsh-pet/tree/main/dsh-pet/assets/webm)，文件名就是动作的中文名。
+>
+> 想要的动作那边也没有？**去 dsh-pet 提**，别在这儿造轮子——它是这个角色和全部素材的源头，「AI 生成动画」的提示词和管线都在那个仓库里，在那边加一段，这个项目一条命令就能接进来。
+
 ### 3.2 换掉整个角色
 
 桌宠不认「鲸鱼」这个概念，它只认：
