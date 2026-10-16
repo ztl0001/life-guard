@@ -148,6 +148,10 @@ python tools/make_pet_anim.py --dsh-pet "D:\dsh-pet\dsh-pet" --only idle,click_h
 
 ---
 
+> 上面只是第一层——改配置。想换桌宠角色、加自己的动作、改乘数公式、把封锁换成别的网站，见 [**DIY.md**](../DIY.md)。
+
+---
+
 ## 已知限制
 
 - **只支持 Windows**。ACL 封锁、hosts、`shutdown`、计划任务都是 Windows 的东西。
