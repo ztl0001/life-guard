@@ -379,7 +379,7 @@ DEFAULT_CONFIG = {
         "laundry_reward": 2,
         "no_overrun_reward": 1,
         "streak_reward": 10,
-        "event_bonus": 0.1,
+        "event_bonus": 0.35,
         "multiplier_cap": 1.0,
         # 关屏时的"完整一天"奖励：这一夜乘数满格、完成的事够多，额外加一笔。
         "screen_off_bonus": 5,
@@ -847,7 +847,7 @@ def multiplier_of(st, cfg, day=None):
     base = rhythm_base(st, cfg, day)
     if day != today_str():
         return base
-    bonus = cfg["ap"].get("event_bonus", 0.1) * st.get("earned_events_today", 0)
+    bonus = cfg["ap"].get("event_bonus", 0.35) * st.get("earned_events_today", 0)
     cap = cfg["ap"].get("multiplier_cap", 1.0)
     return round(min(cap, base + bonus), 4)
 
@@ -869,7 +869,7 @@ def nightly_multiplier(st, cfg):
         return 0.0, 0
     base = float(rec.get("rhythm") or 0.0)
     events = int(rec.get("blocks", rec.get("events")) or 0)
-    bonus = cfg["ap"].get("event_bonus", 0.1) * events
+    bonus = cfg["ap"].get("event_bonus", 0.35) * events
     cap = cfg["ap"].get("multiplier_cap", 1.0)
     return round(min(cap, base + bonus), 4), events
 
@@ -1634,7 +1634,7 @@ def snapshot():
             "multiplier": mult,
             "rhythm_base": base_mult,
             "earned_events": st.get("earned_events_today", 0),
-            "event_bonus": cfg["ap"].get("event_bonus", 0.1),
+            "event_bonus": cfg["ap"].get("event_bonus", 0.35),
             "multiplier_cap": cfg["ap"].get("multiplier_cap", 1.0),
             "wake_time": st.get("wake_time"),
             "wake_detected": st.get("wake_detected"),

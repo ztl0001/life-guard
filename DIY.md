@@ -37,7 +37,7 @@
 | `schedule.wake_window_end` | 达标线，晚于此开始扣系数 | `08:50` |
 | `ap.study_block_minutes` | 一个学习块多长 | `40` |
 | `ap.study_reward` | 完成一个块给多少 AP | `4` |
-| `ap.event_bonus` | 每完成一个块，当天乘数加多少 | `0.15` |
+| `ap.event_bonus` | 每完成一个块，当天乘数加多少 | `0.35` |
 | `ap.multiplier_cap` | 乘数上限 | `1.0` |
 | `game.ap_per_hour` | 每小时游戏/娱乐花多少 AP | `6` |
 | `game.daily_cap_minutes` | 游戏每天上限 | `120` |

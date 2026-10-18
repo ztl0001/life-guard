@@ -371,7 +371,8 @@ def speech_lines(d):
     if mult >= 1.0:
         out.append(("乘数满格了，今天状态不错", "good"))
     elif base < 1.0:
-        out.append(("乘数只有 %.2f，做件事能加 0.1" % mult, "warn"))
+        out.append(("乘数只有 %.2f，做件事能加 %g"
+                    % (mult, float(d.get("event_bonus") or 0.35)), "warn"))
     if shared:
         if fun_cap and fun_min >= fun_cap:
             out.append(("娱乐额度用完了，明天再来", "bad"))
