@@ -156,13 +156,11 @@
       <div class="muted">护身符 <b id="talisman">0</b> 张</div>
     </div>
     <div class="card">
-      <h2>今日娱乐额度（游戏 / B 站分开算）</h2>
-      <div class="muted"><b>游戏</b> 还剩</div>
+      <h2>今日娱乐额度（游戏 / B 站共用）</h2>
+      <div class="muted">游戏和 B 站共用一个池子，今天还剩</div>
       <div class="big" id="gameleft">–</div>
-      <div class="muted">已用 <b id="gametoday">0</b> / <b id="gamecap">120</b> 分钟</div>
-      <div class="muted" style="margin-top:10px"><b>B 站</b> 还剩</div>
-      <div class="big" id="bilileft">–</div>
-      <div class="muted">已用 <b id="bilitoday">0</b> / <b id="bilicap">120</b> 分钟</div>
+      <div class="muted">共用 <b id="gamecap">240</b> 分钟，已用 <b id="funtoday">0</b> 分钟</div>
+      <div class="muted" style="margin-top:10px">其中 <b>游戏</b> <b id="gametoday">0</b> 分钟 · <b>B 站</b> <b id="bilitoday">0</b> 分钟</div>
       <div class="row" style="margin-top:12px">
         <input type="number" id="unplanned" placeholder="计划外游戏分钟数" min="1" max="1440" style="max-width:180px">
         <button id="btn-unplanned">记录计划外游戏</button>
@@ -311,7 +309,7 @@
       </div>
     </div>
     <div class="muted" style="margin-top:10px">
-       桌面上那条蓝鱼可以拖动，位置会记住。鼠标移上去会显示行动点、正在进行的任务与已累计时间、当前乘数、游戏和 B 站各自用了多少额度，以及 deepseek / GLM 余额。右键点它可以收起。
+       桌面上那条蓝鱼可以拖动，位置会记住。鼠标移上去会显示行动点、正在进行的任务与已累计时间、当前乘数、娱乐额度的总用量和游戏 / B 站各自的用量，以及 deepseek / GLM 余额。右键点它可以收起。
     </div>
   </div>
 
@@ -389,12 +387,12 @@ function render(){
   document.getElementById('streak').innerHTML = S.streak + '<small>天</small>';
   document.getElementById('talisman').textContent = S.talismans;
 
-  document.getElementById('gameleft').innerHTML = Math.max(0, S.game_cap - S.game_minutes) + '<small>分钟</small>';
+  // 游戏和 B 站共用一份额度：「还剩」看的是池子总量，不是单边
+  document.getElementById('gameleft').innerHTML = Math.max(0, S.fun_cap - S.fun_minutes) + '<small>分钟</small>';
+  document.getElementById('gamecap').textContent = S.fun_cap;
+  document.getElementById('funtoday').textContent = S.fun_minutes;
   document.getElementById('gametoday').textContent = S.game_minutes;
-  document.getElementById('gamecap').textContent = S.game_cap;
-  document.getElementById('bilileft').innerHTML = Math.max(0, S.bili_cap - S.bili_minutes) + '<small>分钟</small>';
   document.getElementById('bilitoday').textContent = S.bili_minutes;
-  document.getElementById('bilicap').textContent = S.bili_cap;
 
   // 计划外游戏时间：记录系统没管到的游戏时间（比如 Steam、手机游戏）
   const upBox = document.getElementById('unplanned');
@@ -600,9 +598,9 @@ function render(){
     (pet.anim_exists === false ? '素材缺失' : '正常');
 
   const rate = document.getElementById('rate');
-  rate.textContent = '每 60 分钟 ' + S.cost.per_hour + ' AP，每天上限 ' + S.game_cap + ' 分钟';
+  rate.textContent = '每 60 分钟 ' + S.cost.per_hour + ' AP，与 B 站共用 ' + S.fun_cap + ' 分钟额度';
   document.getElementById('birate').textContent =
-    '每 60 分钟 ' + S.cost.per_hour + ' AP，每天上限 ' + S.bili_cap + ' 分钟，到点自动重新封锁';
+    '每 60 分钟 ' + S.cost.per_hour + ' AP，与游戏共用 ' + S.fun_cap + ' 分钟额度，到点自动重新封锁';
   const rb = document.getElementById('redeem');
   const bb = document.getElementById('biredeem');
   rb.innerHTML = ''; bb.innerHTML = '';
@@ -610,8 +608,8 @@ function render(){
   S.cost.steps.forEach(function(m){
     const cost = Math.max(1, Math.round(m/60*S.cost.per_hour));
     const short = busy || S.ap < cost;
-    const overG = (S.game_minutes + m) > S.game_cap;
-    const overB = (S.bili_minutes + m) > S.bili_cap;
+    const overG = (S.fun_minutes + m) > S.fun_cap;
+    const overB = overG;
     const b = document.createElement('button');
     b.textContent = m + ' 分钟 · ' + cost + ' AP';
     b.disabled = short || overG;

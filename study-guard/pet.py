@@ -335,9 +335,18 @@ def speech_lines(d):
     base = float(d.get("rhythm_base") or 0)
     study_min = int(d.get("study_minutes") or 0)
     gfun = int(d.get("game_minutes") or 0)
-    gcap = int(d.get("game_cap") or 0)
     bfun = int(d.get("bili_minutes") or 0)
-    bcap = int(d.get("bili_cap") or 0)
+    # 游戏和 B 站可能共用一个池子（config 的 shared_cap_minutes）：那种情况下
+    # 额度剩余要按总量算，只看单边会把「还剩一百多分钟」误报成快用完
+    shared = bool(d.get("fun_shared"))
+    if shared:
+        fun_cap = int(d.get("fun_cap") or 0)
+        fun_min = int(d.get("fun_minutes") or 0)
+        gcap = bcap = 0
+    else:
+        gcap = int(d.get("game_cap") or 0)
+        bcap = int(d.get("bili_cap") or 0)
+        fun_cap = fun_min = 0
     kind = d.get("active_kind")
     left = int((d.get("unlock_remaining") or 0) // 60)
     if sa:
@@ -363,10 +372,14 @@ def speech_lines(d):
         out.append(("乘数满格了，今天状态不错", "good"))
     elif base < 1.0:
         out.append(("乘数只有 %.2f，做件事能加 0.1" % mult, "warn"))
-    if gcap and gfun >= gcap:
-        out.append(("游戏额度用完了，明天再来", "bad"))
-    if bcap and bfun >= bcap:
-        out.append(("B 站额度用完了，明天再来", "bad"))
+    if shared:
+        if fun_cap and fun_min >= fun_cap:
+            out.append(("娱乐额度用完了，明天再来", "bad"))
+    else:
+        if gcap and gfun >= gcap:
+            out.append(("游戏额度用完了，明天再来", "bad"))
+        if bcap and bfun >= bcap:
+            out.append(("B 站额度用完了，明天再来", "bad"))
     if study_min >= 40:
         out.append(("今天已经学了 %d 分钟" % study_min, "good"))
     out += [(t, "chat") for t in
@@ -796,13 +809,30 @@ def run(base_dir):
                                       "#dc2626")]),
                 ("学习", "#5b6b7f", [(study, "#047857")]),
                 ("乘数", "#5b6b7f", [("%.2f" % mult, mcol)]),
-                ("游戏", "#5b6b7f", [("%s / %s 分钟" % (d.get("game_minutes", 0),
-                                                        d.get("game_cap", 0)),
-                                      "#6d28d9")]),
-                ("B站", "#5b6b7f", [("%s / %s 分钟" % (d.get("bili_minutes", 0),
-                                                       d.get("bili_cap", 0)),
-                                     "#db2777")]),
             ]
+            if d.get("fun_shared"):
+                # 共用一个池子：先看总量，再拆开看各自用了多少
+                pairs += [
+                    ("娱乐", "#5b6b7f", [("%s / %s 分钟"
+                                          % (d.get("fun_minutes", 0),
+                                             d.get("fun_cap", 0)),
+                                          "#6d28d9")]),
+                    ("明细", "#5b6b7f", [("游戏 %s · B站 %s"
+                                          % (d.get("game_minutes", 0),
+                                             d.get("bili_minutes", 0)),
+                                          "#db2777")]),
+                ]
+            else:
+                pairs += [
+                    ("游戏", "#5b6b7f", [("%s / %s 分钟"
+                                          % (d.get("game_minutes", 0),
+                                             d.get("game_cap", 0)),
+                                          "#6d28d9")]),
+                    ("B站", "#5b6b7f", [("%s / %s 分钟"
+                                         % (d.get("bili_minutes", 0),
+                                            d.get("bili_cap", 0)),
+                                         "#db2777")]),
+                ]
         pairs = pairs + balance_pairs()
         sig = tuple((k, kc, tuple(s)) for k, kc, s in pairs)
         if sig == last_tip[0]:

@@ -50,6 +50,7 @@
       90
     ],
     "daily_cap_minutes": 120,
+    "shared_cap_minutes": 240,
     "refund_unused": true,
     "warning_seconds": 180,
     "entertainment_processes": [

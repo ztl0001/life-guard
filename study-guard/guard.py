@@ -683,6 +683,27 @@ def fun_cap(cfg, kind):
     return int(cfg["game"]["daily_cap_minutes"])
 
 
+def fun_shared_cap(cfg):
+    """游戏和 B 站合并计算时的每日总额度；设成 0 就退回各算各的。
+
+    设上它以后两边共用一个池子：240 分钟全花在游戏上可以，游戏 120 加
+    B 站 120 也可以，只约束总数，不再分别限制。此时 daily_cap_minutes
+    不再生效。
+    """
+    try:
+        return max(0, int(cfg.get("game", {}).get("shared_cap_minutes") or 0))
+    except (TypeError, ValueError):
+        return 0
+
+
+def fun_total_cap(cfg):
+    """今天娱乐时间的总上限：共享模式就是那个池子，否则是两边相加。"""
+    shared = fun_shared_cap(cfg)
+    if shared:
+        return shared
+    return fun_cap(cfg, "game") + fun_cap(cfg, "bilibili")
+
+
 # ---------------------------------------------------------------- rules
 def today_str():
     return date.today().isoformat()
@@ -1656,7 +1677,8 @@ def snapshot():
             "unplanned_multiplier": float(
                 cfg["game"].get("unplanned_multiplier", 1.5) or 1.5),
             "fun_minutes": fun_used(st, "game") + fun_used(st, "bilibili"),
-            "fun_cap": fun_cap(cfg, "game") + fun_cap(cfg, "bilibili"),
+            "fun_cap": fun_total_cap(cfg),
+            "fun_shared": bool(fun_shared_cap(cfg)),
             "unlock_remaining": unlock_left,
             "unlock_total": (st.get("session") or {}).get("bought", 0) * 60,
             "locked": e.game_locked(),
@@ -1890,17 +1912,27 @@ def do_action(payload):
             if kind not in FUN_KINDS:
                 kind = "game"
             label = FUN_LABEL[kind]
-            cap = fun_cap(cfg, kind)
             sess = st.get("session") or {}
-            # only a session of the same kind eats into that kind's allowance
-            pending = sess.get("bought", 0) if sess.get("kind") == kind else 0
-            already = fun_used(st, kind) + pending
+            shared = fun_shared_cap(cfg)
+            if shared:
+                # 共用一个池子：在走的娱乐时间不管是哪一类，都占同一个额度
+                cap = shared
+                pending = sess.get("bought", 0) if sess.get("kind") in FUN_KINDS else 0
+                already = (fun_used(st, "game") + fun_used(st, "bilibili")
+                           + pending)
+                what = "娱乐"
+            else:
+                cap = fun_cap(cfg, kind)
+                # only a session of the same kind eats into that kind's allowance
+                pending = sess.get("bought", 0) if sess.get("kind") == kind else 0
+                already = fun_used(st, kind) + pending
+                what = label
             if e.active_kind():
                 ok, msg = False, "还有一段娱乐时间没走完，等它结束或点立即重新封锁"
             elif minutes <= 0:
                 ok, msg = False, "分钟数无效"
             elif already + minutes > cap:
-                ok, msg = False, "今天%s额度只剩 %d 分钟" % (label, max(0, cap - already))
+                ok, msg = False, "今天%s额度只剩 %d 分钟" % (what, max(0, cap - already))
             elif kind == "bilibili" and not hosts_can_write():
                 # B站 opens by lifting the hosts block, and hosts needs an
                 # elevated token. Say so instead of spending points on nothing.
